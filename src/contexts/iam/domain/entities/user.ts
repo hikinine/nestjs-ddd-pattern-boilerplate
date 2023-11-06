@@ -9,16 +9,14 @@ import {
 import { AuthenticateStrategyPolicy } from '@iam/domain/policies';
 import * as Rules from '@iam/domain/rules';
 import { OnlyActiveUsersCan } from '@iam/domain/rules';
-import { OAuth, SignInToken, Username } from '@iam/domain/value-object';
-import { Email, Phone } from '@shared/domain';
-import { Auth, Group, Permission, RefreshToken } from './';
+import { OAuth, SignInToken } from '@iam/domain/value-object';
+import { Email } from '@shared/domain';
+import { Auth, Group, Permission, Profile, RefreshToken } from './';
 import { userValidation } from './validation/user';
 
 export interface UserProps extends Domain.EntityProps {
-  username: Username;
   email: Email;
-  phone: Phone;
-  office: string;
+  profile: Profile;
   auth: Auth;
   groups: Group[];
   permissions: Permission[];
@@ -184,7 +182,8 @@ export class User extends Domain.Aggregate<UserProps> {
   protected getSignInPayload() {
     const payload = {
       id: this.id.value,
-      username: this.username.value,
+      email: this.email.value,
+      fullName: this.profile.fullName,
       permissions: this.getCombinedBitmapPermissions(),
     };
     return payload;
@@ -321,27 +320,6 @@ export class User extends Domain.Aggregate<UserProps> {
   public hasPermissionBitmap(bitmap: string): boolean {
     return this.props.permissions.some((perm) => perm.bitmap === bitmap);
   }
-  /**
-   * This function changes the phone number of an object's props.
-   * @param {Phone} phone - The parameter `phone` is of type `Phone`, which is likely a custom data type
-   * representing a phone number. The `changePhone` method is designed to update the `phone` property of
-   * the object that it is called on with the new `phone` value passed as an argument. However,
-   */
-  public changePhone(phone: Phone) {
-    this.props.phone = phone;
-  }
-
-  /**
-   * This function changes the username of an object's props.
-   * @param {Username} username
-   */
-  public changeUsername(username: Username) {
-    this.props.username = username;
-  }
-
-  public changeOffice(office: string) {
-    this.props.office = office;
-  }
 
   public revokeAll() {
     this.revokeAllRefreshToken();
@@ -400,22 +378,16 @@ export class User extends Domain.Aggregate<UserProps> {
     return this.props.isActive;
   }
 
-  get office() {
-    return this.props.office;
+  get profile() {
+    return this.props.profile;
   }
+
   get active() {
     return this.props.isActive;
-  }
-  get username() {
-    return this.props.username;
   }
 
   get email() {
     return this.props.email;
-  }
-
-  get phone() {
-    return this.props.phone;
   }
 
   get auth() {

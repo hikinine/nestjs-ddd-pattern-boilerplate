@@ -26,6 +26,7 @@ model user {
 }
 
 model profile {
+  address   address?
   user      user      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String    @id @unique
   firstName String?
@@ -204,12 +205,10 @@ model recentActivies {
   createdAt   DateTime @default(now())
 }
 
-
 model address {
-  
+  profile      profile  @relation(fields: [profileId], references: [userId], onDelete: Cascade)
   id           String   @id @default(cuid())
-  companyId    String?  @unique
-  unitId       String?  @unique
+  profileId    String   @unique
   street       String?
   number       String?
   complement   String?
