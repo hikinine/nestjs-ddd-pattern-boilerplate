@@ -1,0 +1,23 @@
+
+{
+  "$schema": "https://json.schemastore.org/swcrc",
+  "sourceMaps": true,
+  "jsc": {
+    "parser": {
+      "syntax": "typescript",
+      "decorators": true,
+      "dynamicImport": true
+    },
+    "transform": {
+      "legacyDecorator": true,
+      "decoratorMetadata": true
+    },
+    "paths": {
+      "@iam/*": ["dist/contexts/iam/*"],
+      "@lib/*": ["dist/lib/*"],
+      "@app/*": ["dist/*"],
+      "@shared/*": ["dist/contexts/shared/*"]
+    }
+  },
+  "minify": false
+}

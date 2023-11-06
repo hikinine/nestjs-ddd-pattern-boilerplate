@@ -1,0 +1,15 @@
+{
+  "moduleFileExtensions": ["js", "json", "ts"],
+  "rootDir": ".",
+  "testEnvironment": "node",
+  "testRegex": ".e2e-spec.js$",
+  "transform": {
+    "^.+\\.(t|j)s$": ["@swc/jest"]
+  },
+  "moduleNameMapper": {
+    "^@app(|/.*)$": "<rootDir>/$1",
+    "^@lib(|/.*)$": "<rootDir>/lib/$1",
+    "^@iam(|/.*)$": "<rootDir>/contexts/iam/$1",
+    "^@shared(|/.*)$": "<rootDir>/contexts/shared/$1"
+  }
+}

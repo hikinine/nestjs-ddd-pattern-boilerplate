@@ -1,0 +1,196 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "binary"
+}
+
+model user {
+  recentActivies        recentActivies[]
+  groupRequest          groupRequest[]
+  groupParticipants     groupParticipants[]
+  permissions           userPermission[]
+  entitiesAccessControl entitiesAccessControl[]
+  authentication        authentication?
+  id                    String                  @id @default(cuid())
+  username              String                  @unique
+  email                 String
+  phone                 String
+  office                String
+  isActive              Boolean                 @default(true)
+  createdBy             String?
+  updatedBy             String?
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+}
+
+
+model oauth {
+  authentication         authentication @relation(fields: [authenticationId], references: [userId], onDelete: Cascade)
+  externalUserProviderId String         @id @unique
+  authenticationId       String
+  provider               String        
+}
+
+model authentication {
+  oauth            oauth[]
+  recoveryPassword recoveryPassword[]
+  refreshToken     refreshToken[]
+  user             user               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String             @id @unique
+  password         String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+}
+
+model recoveryPassword {
+  authentication         authentication @relation(fields: [authenticationUserId], references: [userId], onDelete: Cascade)
+  token                  String         @id @unique
+  authenticationUserId   String
+  expiresAt              DateTime
+  passwordWasRecovered   Boolean        @default(false)
+  passwordWasRecoveredAt DateTime?
+  createdAt              DateTime       @default(now())
+}
+
+model refreshToken {
+  authentication        authentication @relation(fields: [authenticationUserId], references: [userId], onDelete: Cascade)
+  id                    String         @id @default(cuid())
+  token                 String         @unique
+  authenticationUserId  String
+  refreshTokenExpiresAt DateTime
+  userAgent             String?
+  createdAt             DateTime       @default(now())
+}
+
+enum GroupRequestStatus {
+  Pending
+  Approved
+  Rejected
+}
+
+enum GroupRequestType {
+  Invite
+  Apply
+}
+
+model groupRequest {
+  group                group              @relation(fields: [groupId], references: [id])
+  user                 user               @relation(fields: [userId], references: [id])
+  userId               String
+  groupId              String
+  status               GroupRequestStatus @default(Pending)
+  type                 GroupRequestType
+  appliedAt            DateTime?
+  invitedAt            DateTime?
+  invitedBy            String?
+  acceptedOrRejectedAt DateTime?
+  notificationSentAt   DateTime?
+
+  @@id([userId, groupId])
+}
+
+model groupParticipants {
+  group     group    @relation(fields: [groupId], references: [id])
+  user      user     @relation(fields: [userId], references: [id])
+  userId    String
+  groupId   String
+  role      String
+  createdAt DateTime @default(now())
+
+  @@id([userId, groupId])
+}
+
+model group {
+  participants groupParticipants[]
+  permission   groupPermission[]
+  request      groupRequest[]
+  id           String              @id @default(cuid())
+  name         String              @unique
+  description  String              @default("") @db.Text()
+  isDepartment Boolean             @default(false)
+  createdBy    String?
+  updatedBy    String?
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+}
+
+model groupPermission {
+  group        group       @relation(fields: [groupId], references: [id])
+  permission   permission  @relation(fields: [permissionId], references: [id])
+  id           String      @id @default(cuid())
+  groupId      String
+  permissionId String
+  manage       Permissions @default(AcessoNegado)
+  read         Permissions @default(AcessoNegado)
+  create       Permissions @default(AcessoNegado)
+  update       Permissions @default(AcessoNegado)
+  delete       Permissions @default(AcessoNegado)
+  automation   Permissions @default(AcessoNegado)
+  export       Permissions @default(AcessoNegado)
+  import       Permissions @default(AcessoNegado)
+  createdBy    String?
+  updatedBy    String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model userPermission {
+  user         user        @relation(fields: [userId], references: [id])
+  permission   permission  @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  id           String      @id @default(cuid())
+  userId       String
+  permissionId String
+  manage       Permissions @default(AcessoNegado)
+  read         Permissions @default(AcessoNegado)
+  create       Permissions @default(AcessoNegado)
+  update       Permissions @default(AcessoNegado)
+  delete       Permissions @default(AcessoNegado)
+  automation   Permissions @default(AcessoNegado)
+  export       Permissions @default(AcessoNegado)
+  import       Permissions @default(AcessoNegado)
+  createdBy    String?
+  updatedBy    String?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model entitiesAccessControl {
+  id           String   @id @default(cuid())
+  user         user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
+  permissionId String
+  entityId     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model permission {
+  groupPermission groupPermission[]
+  userPermission  userPermission[]
+  id              String            @id @unique
+}
+
+enum PersonType {
+  Fisica
+  Juridica
+}
+
+enum Permissions {
+  AcessoNegado
+  Pessoal
+  PessoalEGrupo
+  Total
+}
+
+model recentActivies {
+  user      user     @relation(fields: [userId], references: [id])
+  id        String   @id @default(cuid())
+  userId    String
+  entityId  String
+  description String?
+  createdAt DateTime @default(now())
+}
