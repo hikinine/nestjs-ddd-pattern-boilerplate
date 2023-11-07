@@ -2,26 +2,41 @@ import { User } from '@iam/domain/entities';
 
 export class UserOutput {
   id: string;
-  username: string;
   email: string;
-  office: string;
   isActive: boolean;
-  phone: string;
+  encodedPermissions: string[];
+  createdAt: Date;
+  profile: {
+    firstName?: string;
+    lastName?: string;
+    fullName?: string;
+    phone?: string;
+    office?: string;
+    avatar?: string;
+    birthday?: Date;
+    gender?: 'M' | 'F' | 'O';
+    address?: {
+      street?: string;
+      number?: string;
+      complement?: string;
+      neighborhood?: string;
+      city?: string;
+      state?: string;
+      extra?: string;
+      zipCode?: string;
+    };
+  };
   groups: {
     id: string;
     name: string;
     isDepartment: boolean;
   }[];
-  encodedPermissions: string[];
-  createdAt: Date;
 
   constructor(user: User) {
     this.id = user.id.value;
-    this.username = user.username.value;
+    this.profile = user.profile.toPrimitives();
     this.email = user.email.value;
-    this.office = user.office;
     this.isActive = user.active;
-    this.phone = user.phone.value;
     this.encodedPermissions = user.permissions.map(
       (permission) => permission.bitmap,
     );

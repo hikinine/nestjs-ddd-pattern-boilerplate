@@ -1,47 +1,37 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsOptional, IsString } from 'class-validator';
+import { IsDate, IsEmail, IsOptional, IsString } from 'class-validator';
 
 export class CreateUserInput {
-  @ApiProperty({
-    description: 'Nome do usuário',
-    default: 'John Doe',
-  })
+  @ApiProperty({ description: 'Primeiro nome' })
   @IsString()
-  username: string;
+  firstName: string;
 
-  @ApiProperty({
-    description: 'Cargo do usuário',
-    default: 'Desenvolvedor',
-  })
+  @ApiProperty({ description: 'Último nome' })
+  @IsString()
+  lastName: string;
+
+  @ApiProperty({ description: 'Cargo do usuário' })
   @IsString()
   office: string;
 
-  @ApiProperty({
-    description: 'Senha do usuário',
-    default: '12345678',
-  })
-  @IsString()
-  password: string;
-
-  @ApiProperty({
-    description: 'Email do usuário',
-    default: 'john@newsun.energy',
-  })
+  @ApiProperty({ description: 'Email do usuário' })
   @IsEmail()
   @IsString()
   email: string;
 
-  @ApiProperty({
-    description: 'Telefone do usuário',
-    default: '(11) 11111-9999',
-  })
+  @ApiProperty({ description: 'Telefone do usuário' })
   @IsString()
   phone: string;
 
-  @ApiProperty({
-    description: 'BitrixId do usuário caso queira ser vinculado ',
-  })
   @IsString()
   @IsOptional()
-  externalUserProviderId?: string;
+  avatar?: string;
+
+  @IsString()
+  @IsOptional()
+  gender?: 'M' | 'F' | 'O';
+
+  @IsDate()
+  @IsOptional()
+  birthday?: Date;
 }
