@@ -3,14 +3,14 @@ import { Domain } from '@hiki9/rich-domain/dist';
 import { Username } from '../value-object';
 
 export interface ProfileProps extends Domain.EntityProps {
-  firstName: Username;
-  lastName: Username;
-  phone: Phone;
-  office: string;
-  avatar: string;
-  birthday: Date;
-  gender: 'M' | 'F' | 'O';
-  address: Address;
+  firstName?: Username;
+  lastName?: Username;
+  phone?: Phone;
+  office?: string;
+  avatar?: string;
+  birthday?: Date;
+  gender?: 'M' | 'F' | 'O';
+  address?: Address;
 }
 
 const hooks = Domain.Hooks<Profile, ProfileProps>({});
@@ -87,6 +87,6 @@ export class Profile extends Domain.Entity<ProfileProps> {
   }
 
   get fullName() {
-    return `${this.props.firstName.value} ${this.props.lastName.value}`;
+    return `${this.props?.firstName?.value} ${this.props?.lastName?.value}`;
   }
 }
