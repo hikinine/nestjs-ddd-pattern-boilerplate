@@ -9,7 +9,7 @@ import {
   ChangeUserPermissionsInput,
   CreateUserInput,
   SubscribeUserToGroupInput,
-  UpdateUserInput,
+  UpdateUserProfileInput,
   UserOutput,
   UserSummary,
 } from '@iam/presentation/http/dto';
@@ -53,8 +53,8 @@ export class UserController {
 
   @Put('/')
   @RequiredPermissions(PermissionTo.Update.Iam)
-  async updateUser(@Body() dto: UpdateUserInput): Promise<void> {
-    await this.userService.updateUser(dto);
+  async updateUser(@Body() dto: UpdateUserProfileInput): Promise<void> {
+    await this.userService.updateUserProfile(dto);
     return void 0;
   }
 
@@ -110,15 +110,6 @@ export class UserController {
   @RequiredPermissions(PermissionTo.Read.Iam)
   async getUserById(@Param('id') id: string): Promise<UserOutput> {
     const user = await this.userService.findUserById(id);
-    return new UserOutput(user);
-  }
-
-  @Get('/username/:username')
-  @RequiredPermissions(PermissionTo.Read.Iam)
-  async getUserByUsername(
-    @Param('username') username: string,
-  ): Promise<UserOutput> {
-    const user = await this.userService.findUserByUsername(username);
     return new UserOutput(user);
   }
 
