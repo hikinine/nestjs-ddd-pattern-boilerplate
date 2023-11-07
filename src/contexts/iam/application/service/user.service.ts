@@ -13,7 +13,7 @@ import {
   SendEmailCommandProps,
   SubscribeUserToGroupCommand,
   UnsubscribeUserToGroupCommand,
-  UpdateUserBasicInfoCommand,
+  UpdateUserProfileCommand,
 } from '@iam/domain/command';
 import { User } from '@iam/domain/entities';
 import { FindUserQuery, GetWebhooksRegistryQuery } from '@iam/domain/queries';
@@ -70,7 +70,7 @@ export class UserService {
   async updateUserProfile(dto: UpdateUserProfileInput): Promise<void> {
     const user = await this.findUserById(dto.userId);
     const propsToChange = this.userUpdateAdapter.build(dto);
-    const command = new UpdateUserBasicInfoCommand(user, propsToChange);
+    const command = new UpdateUserProfileCommand(user, propsToChange);
     await this.commandBus.execute(command);
     await user.dispatchAll(this.publisher);
   }
