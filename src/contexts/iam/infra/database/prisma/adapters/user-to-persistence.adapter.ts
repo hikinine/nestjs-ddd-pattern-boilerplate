@@ -25,6 +25,7 @@ export class PrismaUserToPersistenceAdapter extends Adapter<
     const props: Props = this.initProps(user);
 
     if (user.isNew()) {
+      props.profile.create = this.createProfile(user.profile);
       props.authentication.create = this.createAuthentication(user.auth);
       props.permissions.create = this.createPermissions(user.permissions);
       props.groupParticipants.create = user.groups.map((group) => ({
@@ -33,6 +34,10 @@ export class PrismaUserToPersistenceAdapter extends Adapter<
       }));
     } else {
       props.authentication.update = {};
+
+      if (user.history.hasChange('profile')) {
+        props.profile.update = this.createProfile(user.profile);
+      }
 
       if (user.history.hasChange('auth')) {
         props.authentication.update.password = user.auth.getPasswordHash();
@@ -126,9 +131,6 @@ export class PrismaUserToPersistenceAdapter extends Adapter<
     return {
       id: user.id.value,
       email: user.email.value,
-      phone: user.phone.value,
-      office: user.office,
-      username: user.username.value,
       isActive: user.active,
       updatedAt: user.updatedAt,
       createdAt: user.createdAt,
@@ -138,6 +140,7 @@ export class PrismaUserToPersistenceAdapter extends Adapter<
       permissions: {},
       groupParticipants: {},
       entitiesAccessControl: {},
+      profile: {},
     };
   }
 
@@ -200,6 +203,40 @@ export class PrismaUserToPersistenceAdapter extends Adapter<
     }));
   }
 
+  private createAddress(
+    userAddress: User['profile']['address'],
+  ): Prisma.addressCreateWithoutProfileInput {
+    const address = userAddress.value;
+    if (!address) return {};
+    return {
+      city: address.city,
+      complement: address.complement,
+      extra: address.extra,
+      neighborhood: address.neighborhood,
+      number: address.number,
+      state: address.state,
+      street: address.street,
+      zipCode: address.zipCode,
+    };
+  }
+  private createProfile(
+    userProfile: User['profile'],
+  ): Prisma.profileCreateWithoutUserInput {
+    return {
+      phone: userProfile.phone?.value,
+      firstName: userProfile.firstName?.value,
+      lastName: userProfile.lastName?.value,
+      avatar: userProfile.avatar,
+      birthday: userProfile.birthday,
+      gender: userProfile.gender,
+      office: userProfile.office,
+      address: userProfile.address
+        ? {
+            create: this.createAddress(userProfile.address),
+          }
+        : null,
+    };
+  }
   private createAuthentication(userAuth: Auth) {
     return {
       password: userAuth.getPasswordHash(),
