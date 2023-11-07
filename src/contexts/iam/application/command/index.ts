@@ -14,7 +14,7 @@ export * from './send-email.command';
 export * from './sign-out.command';
 export * from './subscribe-user-to-group.command';
 export * from './unsubscribe-user-to-group.command';
-export * from './update-user-basic-info.command';
+export * from './update-user-profile.command';
 /* eslint-disable prettier/prettier */
 export * from './ask-for-recovery-password.command';
 export * from './recovery-password.command';

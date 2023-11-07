@@ -54,6 +54,10 @@ export class Profile extends Domain.Entity<ProfileProps> {
     this.props.address = address;
   }
 
+  public changeGender(gender: 'M' | 'F' | 'O') {
+    this.props.gender = gender;
+  }
+
   get phone() {
     return this.props.phone;
   }
