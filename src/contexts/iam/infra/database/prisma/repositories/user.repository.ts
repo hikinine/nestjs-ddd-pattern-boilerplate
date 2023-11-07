@@ -35,6 +35,11 @@ export class PrismaUserRepository
   }
 
   private findIncludes: Prisma.userFindManyArgs['include'] = {
+    profile: {
+      include: {
+        address: true,
+      },
+    },
     groupParticipants: {
       include: {
         group: true,
@@ -46,6 +51,11 @@ export class PrismaUserRepository
   };
 
   private uniqueIncludes: Prisma.userFindUniqueArgs['include'] = {
+    profile: {
+      include: {
+        address: true,
+      },
+    },
     groupParticipants: {
       include: {
         group: {
@@ -91,24 +101,6 @@ export class PrismaUserRepository
 
     const pagination = new Pagination<User>(criteria, { result, total });
     return pagination;
-  }
-
-  public async findByUsername(username: string): Promise<User> {
-    const context = this.getContext();
-    const query = {} as Prisma.userFindUniqueArgs;
-    query.where = { username };
-
-    const model = await context.user.findFirst({
-      ...query,
-      include: this.uniqueIncludes,
-    });
-
-    if (!model) {
-      return null;
-    }
-
-    const domain = this.adapterToDomain.build(model as unknown as UserSchema);
-    return domain;
   }
 
   public async findByRecoveryToken(token: string): Promise<User> {
@@ -296,8 +288,16 @@ export class PrismaUserRepository
       OR: [
         { id: containsSearch },
         { email: containsSearch },
-        { phone: containsSearch },
-        { username: containsSearch },
+        {
+          profile: {
+            OR: [
+              { phone: containsSearch },
+              { firstName: containsSearch },
+              { lastName: containsSearch },
+              { office: containsSearch },
+            ],
+          },
+        },
         {
           groupParticipants: {
             some: {

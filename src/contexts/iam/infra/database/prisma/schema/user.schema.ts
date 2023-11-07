@@ -1,9 +1,11 @@
 import {
+  address,
   authentication,
   group,
   groupParticipants,
   groupPermission,
   oauth,
+  profile,
   recoveryPassword,
   refreshToken,
   user,
@@ -11,6 +13,9 @@ import {
 } from '@prisma/client';
 
 export type UserSchema = user & {
+  profile: profile & {
+    address: address;
+  };
   groupParticipants: (groupParticipants & {
     group: group & {
       permission: groupPermission[];
