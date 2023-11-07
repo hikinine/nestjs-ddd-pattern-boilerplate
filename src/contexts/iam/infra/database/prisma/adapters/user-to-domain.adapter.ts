@@ -5,13 +5,14 @@ import {
   Permission as DomainPermission,
   Group,
   Permission,
+  Profile,
   RecoveryPassword,
   RefreshToken,
   User,
 } from '@iam/domain/entities';
 import { OAuth, Password, Username } from '@iam/domain/value-object';
 import { Injectable } from '@nestjs/common';
-import { Email, Phone } from '@shared/domain';
+import { Address, Email, Phone } from '@shared/domain';
 import { UserSchema } from '../schema';
 import { PermissionsAdapter } from './permission-enum.adapter';
 
@@ -21,9 +22,29 @@ export class PrismaUserToDomainAdapter extends Adapter<UserSchema, User> {
     return new User({
       id: new Id(data.id),
       email: new Email(data.email),
-      phone: new Phone(data.phone),
-      username: new Username(data.username),
-      office: data.office,
+
+      profile: new Profile({
+        id: new Id(data.profile.userId),
+        avatar: data.profile.avatar,
+        birthday: data.profile.birthday,
+        firstName: new Username(data.profile.firstName),
+        lastName: new Username(data.profile.lastName),
+        phone: new Phone(data.profile.phone),
+        office: data.profile.office,
+        gender: data.profile.gender as 'M' | 'F' | 'O',
+        address: data.profile.address
+          ? new Address({
+              city: data.profile.address.city,
+              complement: data.profile.address.complement,
+              extra: data.profile.address.extra,
+              neighborhood: data.profile.address.neighborhood,
+              number: data.profile.address.number,
+              state: data.profile.address.state,
+              street: data.profile.address.street,
+              zipCode: data.profile.address.zipCode,
+            })
+          : null,
+      }),
       auth: new Auth({
         password: Password.createFromHash(data?.authentication?.password),
         oauth:
