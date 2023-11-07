@@ -38,17 +38,12 @@ export class FindUserQueryHandler implements IQueryHandler<FindUserQuery> {
       return this.userRepository.findById(props.id);
     }
 
-    if (props.username) {
-      return this.userRepository.findByUsername(props.username);
-    }
-
     throw new ApplicationLevelError('Internal error. (find-user.query)');
   }
 
   private ensureSelectorParamsIsDefined(props: FindUserQueryProps) {
     if (
       !props.id &&
-      !props.username &&
       !props.criteria &&
       !props.refreshToken &&
       !props.email &&

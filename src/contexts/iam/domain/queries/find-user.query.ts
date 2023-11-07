@@ -3,7 +3,6 @@ import { RequireOnlyOne } from '@lib/common';
 
 export type FindUserQueryProps = RequireOnlyOne<{
   id?: string;
-  username?: string;
   email?: string;
   refreshToken?: string;
   recoveryToken?: string;
@@ -13,7 +12,6 @@ export type FindUserQueryProps = RequireOnlyOne<{
 /**
  * Query that finds a user by a given parameter. You  must choice only 1 parameter.
  * @param {string} [id] - The id of the user.
- * @param {string} [username] - The username of the user.
  * @param {string} [email] - The email of the user.
  * @param {string} [refreshToken] - Some refresh token of the user.
  * @param {string} [recoveryToken] - Some recovery token of the user.

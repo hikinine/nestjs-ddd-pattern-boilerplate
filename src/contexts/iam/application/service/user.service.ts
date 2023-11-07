@@ -153,15 +153,6 @@ export class UserService {
     return user;
   }
 
-  public async findUserByUsername(username: string): Promise<User> {
-    const query = new FindUserQuery({ username });
-    const user: User = await this.queryBus.execute(query);
-    if (!(user instanceof User)) {
-      throw new ItemNotFound('Usuário', username);
-    }
-    return user;
-  }
-
   public async findUserByRefreshToken(refreshToken: string): Promise<User> {
     const query = new FindUserQuery({ refreshToken });
     const user: User = await this.queryBus.execute(query);
