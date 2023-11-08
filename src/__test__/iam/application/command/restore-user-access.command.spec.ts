@@ -31,7 +31,7 @@ describe('Command RestoreUserAccessCommand', () => {
     userRepository = app.get(UserRepository);
     context = app.get<AuthorContextService>(AuthorContextService);
 
-    rootUser = await userRepository.findByUsername('root');
+    rootUser = await userRepository.findByEmail('root@root.com');
   });
 
   afterAll(async () => {

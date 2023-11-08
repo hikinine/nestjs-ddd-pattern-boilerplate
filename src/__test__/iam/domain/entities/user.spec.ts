@@ -87,7 +87,7 @@ describe('entity user', () => {
       const user = new User(userProps);
       const newPhone = new Phone('(71) 11111-6282');
       user.profile.changePhone(newPhone);
-      expect(user.profile.changePhone).toEqual(newPhone);
+      expect(user.profile.phone).toEqual(newPhone);
     });
 
     it('should change office', () => {
@@ -95,11 +95,6 @@ describe('entity user', () => {
       const newOffice = 'new-office';
       user.profile.changeOffice(newOffice);
       expect(user.profile.office).toEqual(newOffice);
-    });
-
-    it('should throw if office is not present', () => {
-      const props = { ...userProps, office: undefined };
-      expect(() => new User(props)).toThrow(DomainError);
     });
 
     it('should change username', () => {

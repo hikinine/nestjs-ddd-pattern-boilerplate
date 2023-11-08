@@ -40,7 +40,7 @@ describe('find-users query', () => {
   });
 
   it('should verify createdAt, updatedAt', async () => {
-    const query = new FindUserQuery({ username: user.username.value });
+    const query = new FindUserQuery({ email: user.email.value });
     const queryUser = (await handler.execute(query)) as User;
     expect(queryUser).toBeInstanceOf(User);
 
@@ -51,12 +51,12 @@ describe('find-users query', () => {
   });
 
   it('should return a user by name', async () => {
-    const query = new FindUserQuery({ username: user.username.value });
+    const query = new FindUserQuery({ email: user.email.value });
     const queryUser = (await handler.execute(query)) as User;
     expect(queryUser).toBeInstanceOf(User);
-    expect(queryUser.username).toEqual(queryUser.username);
     expect(queryUser.email).toEqual(user.email);
-    expect(queryUser.phone).toEqual(user.phone);
+    expect(queryUser.email).toEqual(user.email);
+    expect(queryUser.profile.phone).toEqual(user.profile.phone);
     expect(queryUser.permissions[0].bitmap).toEqual(user.permissions[0].bitmap);
     expect(queryUser.createdAt).toEqual(user.createdAt);
   });
@@ -65,9 +65,8 @@ describe('find-users query', () => {
     const query = new FindUserQuery({ id: user.id.value });
     const queryUser = (await handler.execute(query)) as User;
     expect(queryUser).toBeInstanceOf(User);
-    expect(queryUser.username).toEqual(queryUser.username);
     expect(queryUser.email).toEqual(user.email);
-    expect(queryUser.phone).toEqual(user.phone);
+    expect(queryUser.profile.phone).toEqual(user.profile.phone);
     expect(queryUser.permissions[0].bitmap).toEqual(user.permissions[0].bitmap);
     expect(queryUser.createdAt).toEqual(user.createdAt);
   });
@@ -84,8 +83,8 @@ describe('find-users query', () => {
   });
 
   it('should returns null', async () => {
-    const username = 'not-exist' + Math.random();
-    const queryName = new FindUserQuery({ username });
+    const email = 'not-exist' + Math.random();
+    const queryName = new FindUserQuery({ email });
     const queryUserName = await handler.execute(queryName);
 
     const id = 'not-exist' + Math.random();

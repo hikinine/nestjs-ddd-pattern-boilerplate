@@ -87,7 +87,7 @@ describe('Command CreateUserCommand', () => {
         await handler.execute(command);
         expect(spyOnIsUserExists).toBeCalledTimes(1);
         expect(spyOnIsUserExists).toBeCalledWith(
-          command.props.user.username.value,
+          command.props.user.email.value,
         );
       });
     });
