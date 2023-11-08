@@ -4,7 +4,7 @@ import { IsBoolean, IsString } from 'class-validator';
 export abstract class SignInInput {
   @ApiProperty()
   @IsString()
-  username: string;
+  email: string;
 
   @ApiProperty()
   @IsString()

@@ -40,22 +40,12 @@ export class AuthenticationService {
     this.unitOfWorkService.allowTransaction(this);
   }
 
-  /**
-   * function that signs in a user with a basic authentication method and generates
-   * access and refresh tokens.
-   * @param {string} username - A string representing the username of the user trying to sign in.
-   * @param {string} password - The password parameter is a string that represents the user's password.
-   * @param {boolean} [keepMeLoggedIn] - An optional boolean parameter that determines whether the user
-   * wants to stay logged in or not. If set to true, a refresh token will be generated along with the
-   * access token.
-   * @returns SignInToken
-   */
   async signInWithBasic(
-    username: string,
+    email: string,
     password: string,
     keepMeLoggedIn?: boolean,
   ): Promise<SignInToken> {
-    const user = await this.userService.findUserByUsername(username);
+    const user = await this.userService.findUserByEmail(email);
     const command = new GenerateAccessTokenCommand(user, password);
     const signInToken: SignInToken = await this.commandBus.execute(command);
     if (!keepMeLoggedIn) {
@@ -69,12 +59,6 @@ export class AuthenticationService {
     return new SignInToken({ accessToken, refreshToken });
   }
 
-  /**
-   * This function signs in a user using their refresh token.
-   * @param {string} refreshToken - A string representing the refresh token used to authenticate the
-   * user.
-   * @returns signInToken
-   */
   async signInUsingRefreshToken(refreshToken: string): Promise<SignInToken> {
     const user = await this.userService.findUserByRefreshToken(refreshToken);
     const command = new AuthenticateUserWithRefreshTokenCommand(
@@ -85,13 +69,6 @@ export class AuthenticationService {
     return signInToken;
   }
 
-  /**
-   * This function recovers a user's password using a recovery token and returns a sign-in token.
-   * @param {string} token - A string representing the recovery password token that was sent to the
-   * user's email for resetting their password.
-   * @param {string} password - The new password that the user wants to set for their account.
-   * @returns SignInToken
-   */
   @Transactional()
   async recoveryPasswordByUsingTokenThenSignIn(
     token: string,
@@ -102,13 +79,13 @@ export class AuthenticationService {
       throw new ApplicationLevelError('Token expirado ou inválido.');
     }
     const user = await this.userService.findUserByRecoveryToken(token);
-    const username = user.username.value;
+    const email = user.email.value;
     const keepMeLoggedIn = true;
     const command = new RecoveryPasswordCommand({ user, password, token });
     await this.commandBus.execute(command);
     await user.dispatchAll(this.publisher);
     const signInToken = await this.signInWithBasic(
-      username,
+      email,
       password,
       keepMeLoggedIn,
     );
@@ -116,11 +93,6 @@ export class AuthenticationService {
     return signInToken;
   }
 
-  /**
-   * Signs out a user by revoking their refresh token from the database if exists.
-   * @param {string} [refreshToken] - The `refreshToken` parameter is an optional string that represents
-   * the refresh token associated with the user's session.
-   */
   @Transactional()
   async signOut(refreshToken?: string): Promise<void> {
     if (!refreshToken) return;
@@ -137,20 +109,10 @@ export class AuthenticationService {
     await this.commandBus.execute(command);
   }
 
-  /**
-   * Same behaviour as signOut
-   * @param refreshToken
-   * @returns void
-   */
   async revoke(refreshToken: string): Promise<void> {
     return this.signOut(refreshToken);
   }
 
-  /**
-   * Asks for a recovery password for a user with a given email.
-   * @param {string} email - A string representing the email address of the user who needs to recover
-   * their password.
-   */
   @Transactional()
   async askForRecoveryPassword(email: string): Promise<void> {
     const user = await this.userService.findUserByEmail(email);
@@ -159,12 +121,6 @@ export class AuthenticationService {
     await user.dispatchAll(this.publisher);
   }
 
-  /**
-   * Checks if a recovery password token is valid by
-   * finding the user associated with the token.
-   * @param {string} token - A string representing the recovery password token that needs to be verified.
-   * @returns an object with a property "isValid" which is a boolean value.
-   */
   async verifyIfRecoveryPasswordTokenIsValid(
     token: string,
   ): Promise<{ isValid: boolean }> {

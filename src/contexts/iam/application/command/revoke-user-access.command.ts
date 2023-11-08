@@ -24,7 +24,7 @@ export class RevokeUserAccessCommandHandler
 
     if (!user.active) {
       throw new ApplicationLevelError(
-        `O usuário ${user.username.value} (${user.id.value}) já está inativo.`,
+        `O usuário ${user.email.value} (${user.id.value}) já está inativo.`,
       );
     }
 

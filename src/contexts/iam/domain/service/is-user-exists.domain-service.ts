@@ -8,9 +8,9 @@ export class IsUserExistsDomainService
 {
   constructor(private readonly repo: UserRepository) {}
 
-  async execute(props: string): Promise<boolean> {
+  async execute(email: string): Promise<boolean> {
     try {
-      const user = await this.repo.findByUsername(props);
+      const user = await this.repo.findByEmail(email);
       if (!user) return false;
 
       return Boolean(user);

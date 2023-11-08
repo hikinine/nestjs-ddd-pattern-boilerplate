@@ -24,7 +24,7 @@ export class RestoreUserAccessCommandHandler
 
     if (user.active) {
       throw new ApplicationLevelError(
-        `O usuário ${user.username.value} (${user.id.value}) já está ativo.`,
+        `O usuário ${user.email.value} (${user.id.value}) já está ativo.`,
       );
     }
     user.restoreUserAccess();
