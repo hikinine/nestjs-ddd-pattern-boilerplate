@@ -234,7 +234,7 @@ export class PrismaUserToPersistenceAdapter extends Adapter<
         ? {
             create: this.createAddress(userProfile.address),
           }
-        : null,
+        : undefined,
     };
   }
   private createAuthentication(userAuth: Auth) {
