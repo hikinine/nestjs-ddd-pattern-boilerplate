@@ -1,12 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsString } from 'class-validator';
+import { IamDocs } from '../../swagger';
 
 export class ChangeUserActiveStatusInput {
-  @ApiProperty({ description: 'ID do usuário' })
+  @ApiProperty(IamDocs.User.ChangeUserActiveStatusInput.userId)
   @IsString()
   userId: string;
 
-  @ApiProperty({ description: 'Novo status do usuário' })
+  @ApiProperty(IamDocs.User.ChangeUserActiveStatusInput.status)
   @IsBoolean()
   status: boolean;
 }

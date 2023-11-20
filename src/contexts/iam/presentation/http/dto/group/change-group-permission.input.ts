@@ -1,34 +1,33 @@
-import { PermissionEnum } from '@iam/domain/entities';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsArray,
+  IsBoolean,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+import { IamDocs } from '../../swagger';
+import { PermissionDto } from '../user';
 
 export abstract class ChangeGroupPermissionInput {
-  @ApiProperty()
+  @ApiProperty(IamDocs.Group.ChangeGroupPermissionInput.groupId)
   @IsString()
   groupId: string;
 
-  @ApiProperty()
+  @ApiProperty(IamDocs.Group.ChangeGroupPermissionInput.name)
   @IsOptional()
   @IsString()
   name?: string;
 
-  @ApiProperty()
+  @ApiProperty(IamDocs.Group.ChangeGroupPermissionInput.isDepartment)
   @IsOptional()
   @IsBoolean()
   isDepartment?: boolean;
 
-  @ApiProperty()
-  @IsOptional()
+  @ApiProperty(IamDocs.Group.ChangeGroupPermissionInput.permissions)
   @IsArray()
-  permissions?: {
-    entity: string;
-    read: PermissionEnum;
-    manage: PermissionEnum;
-    create: PermissionEnum;
-    update: PermissionEnum;
-    delete: PermissionEnum;
-    automation: PermissionEnum;
-    export: PermissionEnum;
-    import: PermissionEnum;
-  }[];
+  @ValidateNested()
+  @Type(() => PermissionDto)
+  permissions: PermissionDto[];
 }

@@ -1,16 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsString } from 'class-validator';
+import { IamDocs } from '../../swagger';
 
 export abstract class SignInInput {
-  @ApiProperty()
+  @ApiProperty(IamDocs.Authentication.SignInInput.email)
   @IsString()
   email: string;
 
-  @ApiProperty()
+  @ApiProperty(IamDocs.Authentication.SignInInput.password)
   @IsString()
   password: string;
 
-  @ApiProperty()
+  @ApiProperty(IamDocs.Authentication.SignInInput.keepMeLoggedIn)
   @IsBoolean()
   keepMeLoggedIn: boolean;
 }

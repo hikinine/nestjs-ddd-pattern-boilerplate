@@ -1,17 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsArray, IsString, ValidateNested } from 'class-validator';
+import { IamDocs } from '../../swagger';
 import { PermissionDto } from './permission.dto';
 
 export abstract class ChangeUserPermissionsInput {
-  @ApiProperty({ description: 'ID do usuário' })
+  @ApiProperty(IamDocs.User.ChangeUserPermissionsInput.userId)
   @IsString()
   userId: string;
 
-  @ApiProperty({
-    description: 'Lista de permissões a serem modificadas',
-    type: [PermissionDto],
-  })
+  @ApiProperty(IamDocs.User.ChangeUserPermissionsInput.permissions)
   @IsArray()
   @ValidateNested()
   @Type(() => PermissionDto)

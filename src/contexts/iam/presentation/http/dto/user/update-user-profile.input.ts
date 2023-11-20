@@ -1,46 +1,48 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDate, IsObject, IsOptional, IsString } from 'class-validator';
+import { IamDocs } from '../../swagger';
 
 export class UpdateUserProfileInput {
-  @ApiProperty({ description: 'Id do usuário' })
+  @ApiProperty(IamDocs.User.UpdateUserProfileInput.userId)
   @IsString()
   userId: string;
 
-  @ApiProperty({ description: 'Nome do usuário' })
+  @ApiProperty(IamDocs.User.UpdateUserProfileInput.firstName)
   @IsString()
   @IsOptional()
   firstName?: string;
 
-  @ApiProperty({ description: 'Nome do usuário' })
+  @ApiProperty(IamDocs.User.UpdateUserProfileInput.lastName)
   @IsString()
   @IsOptional()
   lastName?: string;
 
-  @ApiProperty({ description: 'Cargo do usuário' })
+  @ApiProperty(IamDocs.User.UpdateUserProfileInput.office)
   @IsString()
   @IsOptional()
   office?: string;
 
-  @ApiProperty({ description: 'Telefone do usuário' })
+  @ApiProperty(IamDocs.User.UpdateUserProfileInput.phone)
   @IsString()
   @IsOptional()
   phone?: string;
 
-  @ApiProperty({ description: 'Avatar do usuário' })
+  @ApiProperty(IamDocs.User.UpdateUserProfileInput.avatar)
   @IsString()
   @IsOptional()
   avatar?: string;
 
-  @ApiProperty({ description: 'Data de nascimento do usuário' })
+  @ApiProperty(IamDocs.User.UpdateUserProfileInput.birthday)
   @IsDate()
   @IsOptional()
   birthday?: Date;
 
-  @ApiProperty({ description: 'Gênero do usuário' })
+  @ApiProperty(IamDocs.User.UpdateUserProfileInput.gender)
   @IsOptional()
   @IsString()
   gender: 'M' | 'F' | 'O';
 
+  @ApiProperty(IamDocs.User.UpdateUserProfileInput.address)
   @IsOptional()
   @IsObject()
   address: {
