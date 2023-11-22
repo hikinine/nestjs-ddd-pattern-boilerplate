@@ -15,11 +15,9 @@ model user {
   permissions           userPermission[]
   entitiesAccessControl entitiesAccessControl[]
   authentication        authentication?
+  profile               profile?
   id                    String                  @id @default(cuid())
-  username              String                  @unique
-  email                 String
-  phone                 String
-  office                String
+  email                 String                  @unique
   isActive              Boolean                 @default(true)
   createdBy             String?
   updatedBy             String?
@@ -27,12 +25,24 @@ model user {
   updatedAt             DateTime                @updatedAt
 }
 
+model profile {
+  address   address?
+  user      user      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String    @id @unique
+  firstName String?
+  lastName  String?
+  avatar    String?
+  birthday  DateTime?
+  gender    String?
+  phone     String?
+  office    String?
+}
 
 model oauth {
   authentication         authentication @relation(fields: [authenticationId], references: [userId], onDelete: Cascade)
   externalUserProviderId String         @id @unique
   authenticationId       String
-  provider               String        
+  provider               String
 }
 
 model authentication {
@@ -187,10 +197,27 @@ enum Permissions {
 }
 
 model recentActivies {
-  user      user     @relation(fields: [userId], references: [id])
-  id        String   @id @default(cuid())
-  userId    String
-  entityId  String
+  user        user     @relation(fields: [userId], references: [id])
+  id          String   @id @default(cuid())
+  userId      String
+  entityId    String
   description String?
-  createdAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+}
+
+model address {
+  profile      profile  @relation(fields: [profileId], references: [userId], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  profileId    String   @unique
+  street       String?
+  number       String?
+  complement   String?
+  neighborhood String?
+  city         String?
+  state        String?
+  country      String?
+  zipCode      String?
+  extra        String?  @db.Text()
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }

@@ -28,7 +28,7 @@ describe('Command RevokeUserAccessCommand', () => {
     handler = app.get(RevokeUserAccessCommandHandler);
     context = app.get(AuthorContextService);
     userRepository = app.get(UserRepository);
-    rootUser = await userRepository.findByUsername('root');
+    rootUser = await userRepository.findByEmail('root@root.com');
   });
 
   afterAll(async () => {

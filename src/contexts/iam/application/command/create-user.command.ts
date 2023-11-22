@@ -21,12 +21,12 @@ export class CreateUserCommandHandler
     const { user } = props;
     user.setAuthor(author.id);
 
-    const [usernameIsRegistered, userProviderIsRegistered] = await Promise.all([
-      this.isUserExistsDomainService.execute(user.username.value),
+    const [emailIsRegistered, userProviderIsRegistered] = await Promise.all([
+      this.isUserExistsDomainService.execute(user.email.value),
       this.userProviderIsAlreadyRegistered(user),
     ]);
 
-    if (usernameIsRegistered) {
+    if (emailIsRegistered) {
       throw new ConflictException('Usuário já registrado.');
     }
 

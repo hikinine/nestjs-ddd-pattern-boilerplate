@@ -1,47 +1,41 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsOptional, IsString } from 'class-validator';
+import { IsDate, IsEmail, IsOptional, IsString } from 'class-validator';
+import { IamDocs } from '../../swagger';
 
 export class CreateUserInput {
-  @ApiProperty({
-    description: 'Nome do usuário',
-    default: 'John Doe',
-  })
+  @ApiProperty(IamDocs.User.CreateUserInput.firstName)
   @IsString()
-  username: string;
+  firstName: string;
 
-  @ApiProperty({
-    description: 'Cargo do usuário',
-    default: 'Desenvolvedor',
-  })
+  @ApiProperty(IamDocs.User.CreateUserInput.lastName)
+  @IsString()
+  lastName: string;
+
+  @ApiProperty(IamDocs.User.CreateUserInput.office)
   @IsString()
   office: string;
 
-  @ApiProperty({
-    description: 'Senha do usuário',
-    default: '12345678',
-  })
-  @IsString()
-  password: string;
-
-  @ApiProperty({
-    description: 'Email do usuário',
-    default: 'john@newsun.energy',
-  })
+  @ApiProperty(IamDocs.User.CreateUserInput.email)
   @IsEmail()
   @IsString()
   email: string;
 
-  @ApiProperty({
-    description: 'Telefone do usuário',
-    default: '(11) 11111-9999',
-  })
+  @ApiProperty(IamDocs.User.CreateUserInput.phone)
   @IsString()
   phone: string;
 
-  @ApiProperty({
-    description: 'BitrixId do usuário caso queira ser vinculado ',
-  })
+  @ApiProperty(IamDocs.User.CreateUserInput.avatar)
   @IsString()
   @IsOptional()
-  externalUserProviderId?: string;
+  avatar?: string;
+
+  @ApiProperty(IamDocs.User.CreateUserInput.gender)
+  @IsString()
+  @IsOptional()
+  gender?: 'M' | 'F' | 'O';
+
+  @ApiProperty(IamDocs.User.CreateUserInput.birthday)
+  @IsDate()
+  @IsOptional()
+  birthday?: Date;
 }

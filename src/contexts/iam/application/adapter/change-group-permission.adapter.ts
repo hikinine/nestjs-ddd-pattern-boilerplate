@@ -29,7 +29,7 @@ export class ChangeGroupPermissionAdapter
             delete: permission.delete,
             read: permission.read,
             update: permission.update,
-            export: permission.export,
+            export: permission._export,
             import: permission.import,
           }),
       );

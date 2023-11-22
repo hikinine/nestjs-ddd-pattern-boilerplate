@@ -1,4 +1,4 @@
-import { Pagination, PaginationCriteria } from '@hiki9/rich-domain/dist';
+import { Pagination, PaginationCriteria } from '@hiki9/rich-domain';
 import { ItemNotFound } from '@hiki9/rich-domain/dist/core/repository-errors';
 import {
   ChangeGroupPermissionAdapter,
@@ -71,10 +71,5 @@ export class GroupService {
       throw new ItemNotFound('Grupo', groupName);
     }
     return group;
-  }
-
-  // 2
-  async delete(groupId: string): Promise<void> {
-    //
   }
 }

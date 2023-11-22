@@ -36,10 +36,10 @@ export class AuthenticationController {
     @Res({ passthrough: true }) response: Response,
     @Body() dto: SignInInput,
   ): Promise<void> {
-    const { username, password, keepMeLoggedIn } = dto;
+    const { email, password, keepMeLoggedIn } = dto;
     try {
       const token = await this.service.signInWithBasic(
-        username,
+        email,
         password,
         keepMeLoggedIn,
       );

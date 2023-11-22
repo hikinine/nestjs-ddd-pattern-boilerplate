@@ -17,7 +17,6 @@ function baseUrl(method: string) {
   return '/iam/authentication' + method;
 }
 describe('authentication.controller e2e', () => {
-  const username = 'root';
   const password = '12345678';
   const email = 'root@root.com';
 
@@ -64,17 +63,19 @@ describe('authentication.controller e2e', () => {
     it('should sign in with basic with keepMeLoggedIn property', async () => {
       const response = await request(httpServer)
         .post(url)
-        .send({ username, password, keepMeLoggedIn: true })
+        .send({ email, password, keepMeLoggedIn: true })
         .set('Accept', 'application/json');
 
       expect(response.body).toEqual({});
       expect(response.status).toBe(201);
       const cookies = response.get('Set-Cookie');
 
-      for (const cookie of cookies) {
+      /**
+      *  for (const cookie of cookies) {
         //expect(cookie).toContain('HttpOnly');
         //sexpect(cookie).toContain('SameSite=Strict');
       }
+      */
 
       const expectedCookies = [AccessTokenCookieKey, RefreshTokenCookieKey];
       for (const cookie of cookies) {
@@ -88,7 +89,7 @@ describe('authentication.controller e2e', () => {
     it('should sign in with basic without keepMeLoggedIn property', async () => {
       const response = await request(httpServer)
         .post(url)
-        .send({ username, password, keepMeLoggedIn: false })
+        .send({ email, password, keepMeLoggedIn: false })
         .set('Accept', 'application/json');
 
       expect(response.status).toBe(201);
@@ -96,10 +97,12 @@ describe('authentication.controller e2e', () => {
       const cookies = response.get('Set-Cookie');
       const expectedCookies = [AccessTokenCookieKey];
 
-      for (const cookie of cookies) {
+      /**
+       *      for (const cookie of cookies) {
         //    expect(cookie).toContain('HttpOnly');
         //  expect(cookie).toContain('SameSite=Strict');
       }
+       */
 
       for (const cookie of cookies) {
         const [ck] = cookie.split(';');
@@ -111,7 +114,7 @@ describe('authentication.controller e2e', () => {
     it('should sign in and verify @accessToken', async () => {
       const response = await request(httpServer)
         .post(url)
-        .send({ username, password, keepMeLoggedIn: true })
+        .send({ email, password, keepMeLoggedIn: true })
         .set('Accept', 'application/json');
 
       expect(response.status).toBe(201);
@@ -124,7 +127,8 @@ describe('authentication.controller e2e', () => {
         if (key !== AccessTokenCookieKey) continue;
         const payload = jwtService.verify(value);
         expect(payload).toHaveProperty('id');
-        expect(payload).toHaveProperty('username');
+        expect(payload).toHaveProperty('email');
+        expect(payload).toHaveProperty('fullName');
         expect(payload).toHaveProperty('permissions');
         expect(payload).toHaveProperty('iat');
         expect(payload).toHaveProperty('exp');
@@ -133,7 +137,7 @@ describe('authentication.controller e2e', () => {
     it('should sign in and verify @refreshToken ensuring that is registered on database', async () => {
       const response = await request(httpServer)
         .post(url)
-        .send({ username, password, keepMeLoggedIn: true })
+        .send({ email, password, keepMeLoggedIn: true })
         .set('Accept', 'application/json');
 
       expect(response.status).toBe(201);
@@ -171,7 +175,7 @@ describe('authentication.controller e2e', () => {
       const response = await request(httpServer)
         .post(url)
         .send({
-          username,
+          email,
           password: Math.random().toString(),
           keepMeLoggedIn: false,
         })
@@ -187,7 +191,7 @@ describe('authentication.controller e2e', () => {
     beforeEach(async () => {
       const {
         value: { accessToken, refreshToken },
-      } = await authService.signInWithBasic(username, password, true);
+      } = await authService.signInWithBasic(email, password, true);
 
       cookieRefreshToken = refreshToken;
       Cookie = [

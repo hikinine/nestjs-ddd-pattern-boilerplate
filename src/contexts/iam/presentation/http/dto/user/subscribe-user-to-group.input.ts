@@ -1,13 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, Length } from 'class-validator';
+import { IsString } from 'class-validator';
+import { IamDocs } from '../../swagger';
 
 export abstract class SubscribeUserToGroupInput {
-  @ApiProperty()
+  @ApiProperty(IamDocs.User.SubscribeUserToGroupInput.userId)
   @IsString()
-  @Length(1)
   userId: string;
 
-  @ApiProperty()
+  @ApiProperty(IamDocs.User.SubscribeUserToGroupInput.groupId)
   @IsString()
   groupId: string;
 }

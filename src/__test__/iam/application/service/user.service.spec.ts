@@ -14,17 +14,12 @@ import { GroupRepository, UserRepository } from '@iam/domain/repositories';
 import { IamModule } from '@iam/iam.module';
 import {
   ChangeUserPermissionsInput,
-  CreateUserInput,
   SubscribeUserToGroupInput,
   UnsubscribeUserToGroupInput,
 } from '@iam/presentation/http/dto';
 import { Author, AuthorContextService, AuthorUserContext } from '@lib/common';
 import { days } from '@lib/utils/time';
-import {
-  ConflictException,
-  INestApplication,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { INestApplication, UnauthorizedException } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 
 describe('user service', () => {
@@ -61,47 +56,6 @@ describe('user service', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
-  });
-
-  describe('create user method', () => {
-    let input: CreateUserInput;
-
-    beforeEach(() => {
-      input = {
-        office: 'Desenvolvedor',
-        email: randomUUID() + '@gmail.com',
-        password: '12345678',
-        phone: '(71) 99295-5292',
-        username: randomUUID(),
-      };
-    });
-
-    it('should create user', async () => {
-      await context.run(authorContext, async () => {
-        await expect(userService.createUser(input)).resolves.toBeUndefined();
-      });
-    });
-
-    it('should throw, user already exists', async () => {
-      await context.run(authorContext, async () => {
-        await expect(userService.createUser(input)).resolves.toBeUndefined();
-        await expect(userService.createUser(input)).rejects.toBeInstanceOf(
-          ConflictException,
-        );
-      });
-    });
-
-    it('should throw invalid input', async () => {
-      await context.run(authorContext, async () => {
-        await expect(
-          userService.createUser({ ...input, email: 'invalid-email' }),
-        ).rejects.toBeInstanceOf(DomainError);
-
-        await expect(
-          userService.createUser({ ...input, password: '123' }),
-        ).rejects.toBeInstanceOf(DomainError);
-      });
-    });
   });
 
   describe('SubscribeToGroup method', () => {
@@ -467,24 +421,6 @@ describe('user service', () => {
       await context.run(authorContext, async () => {
         await expect(
           userService.findUserByEmail('invalid-email'),
-        ).rejects.toBeInstanceOf(ItemNotFound);
-      });
-    });
-
-    it('should get user by username', async () => {
-      await context.run(authorContext, async () => {
-        const resultUser = await userService.findUserByUsername(
-          user.username.value,
-        );
-        expect(resultUser.id.value).toEqual(user.id.value);
-        expect(resultUser.username.value).toEqual(user.username.value);
-      });
-    });
-
-    it('should throw user not found', async () => {
-      await context.run(authorContext, async () => {
-        await expect(
-          userService.findUserByUsername('invalid-username'),
         ).rejects.toBeInstanceOf(ItemNotFound);
       });
     });

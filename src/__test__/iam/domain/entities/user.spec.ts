@@ -4,6 +4,7 @@ import {
   Auth,
   Group,
   Permission,
+  Profile,
   RecoveryPassword,
   RefreshToken,
   User,
@@ -30,10 +31,13 @@ describe('entity user', () => {
   const plainPassword = '12345678';
   beforeEach(() => {
     userProps = {
-      office: 'Desenvolvedor',
-      username: new Username('username'),
+      profile: new Profile({
+        firstName: new Username('username'),
+        lastName: new Username('username'),
+        office: 'Desenvolvedor',
+        phone: new Phone('(71) 99295-6282'),
+      }),
       email: new Email('pppppp@gmail.com'),
-      phone: new Phone('(71) 99295-6282'),
       isActive: true,
       permissions: [Permission.createFromBitmap('@any.13333333')],
       groups: [],
@@ -53,9 +57,9 @@ describe('entity user', () => {
     it('should create a valid user', () => {
       const user = new User(userProps);
       expect(user).toBeInstanceOf(User);
-      expect(user.username).toEqual(userProps.username);
+      expect(user.profile.firstName).toEqual(userProps.profile.firstName);
       expect(user.email).toEqual(userProps.email);
-      expect(user.phone).toEqual(userProps.phone);
+      expect(user.profile.phone).toEqual(userProps.profile.phone);
       expect(user.active).toEqual(userProps.isActive);
       expect(user.permissions).toEqual(userProps.permissions);
       expect(user.groups).toEqual(userProps.groups);
@@ -82,67 +86,72 @@ describe('entity user', () => {
     it('change should phone', () => {
       const user = new User(userProps);
       const newPhone = new Phone('(71) 11111-6282');
-      user.changePhone(newPhone);
-      expect(user.phone).toEqual(newPhone);
+      user.profile.changePhone(newPhone);
+      expect(user.profile.phone).toEqual(newPhone);
     });
 
     it('should change office', () => {
       const user = new User(userProps);
       const newOffice = 'new-office';
-      user.changeOffice(newOffice);
-      expect(user.office).toEqual(newOffice);
-    });
-
-    it('should throw if office is not present', () => {
-      const props = { ...userProps, office: undefined };
-      expect(() => new User(props)).toThrow(DomainError);
+      user.profile.changeOffice(newOffice);
+      expect(user.profile.office).toEqual(newOffice);
     });
 
     it('should change username', () => {
       const user = new User(userProps);
       const newUsername = new Username('new-username');
-      user.changeUsername(newUsername);
-      expect(user.username).toEqual(newUsername);
+      user.profile.changeFirstName(newUsername);
+      expect(user.profile.firstName).toEqual(newUsername);
     });
 
     it('should throw an invalid username', () => {
       const user = new User(userProps);
-      expect(() => user.changeUsername(new Username(''))).toThrow(DomainError);
-      expect(() => user.changeUsername(new Username(1 as any))).toThrow(
+      expect(() => user.profile.changeFirstName(new Username(''))).toThrow(
         DomainError,
       );
-      expect(() => user.changeUsername(new Username({} as any))).toThrow(
-        DomainError,
-      );
-      expect(() => user.changeUsername(new Username([] as any))).toThrow(
-        DomainError,
-      );
-      expect(() => user.changeUsername(new Username(false as any))).toThrow(
-        DomainError,
-      );
-      expect(() => user.changeUsername(new Username(null as any))).toThrow(
-        DomainError,
-      );
-      expect(() => user.changeUsername(new Username(undefined as any))).toThrow(
-        DomainError,
-      );
+      expect(() =>
+        user.profile.changeFirstName(new Username(1 as any)),
+      ).toThrow(DomainError);
+      expect(() =>
+        user.profile.changeFirstName(new Username({} as any)),
+      ).toThrow(DomainError);
+      expect(() =>
+        user.profile.changeFirstName(new Username([] as any)),
+      ).toThrow(DomainError);
+      expect(() =>
+        user.profile.changeFirstName(new Username(false as any)),
+      ).toThrow(DomainError);
+      expect(() =>
+        user.profile.changeFirstName(new Username(null as any)),
+      ).toThrow(DomainError);
+      expect(() =>
+        user.profile.changeFirstName(new Username(undefined as any)),
+      ).toThrow(DomainError);
     });
 
     it('should throw invalid phone', () => {
       const user = new User(userProps);
-      expect(() => user.changePhone(new Phone(''))).toThrow(DomainError);
-      expect(() => user.changePhone(new Phone(1 as any))).toThrow(DomainError);
-      expect(() => user.changePhone(new Phone({} as any))).toThrow(DomainError);
-      expect(() => user.changePhone(new Phone([] as any))).toThrow(DomainError);
-      expect(() => user.changePhone(new Phone(false as any))).toThrow(
+      expect(() => user.profile.changePhone(new Phone(''))).toThrow(
         DomainError,
       );
-      expect(() => user.changePhone(new Phone(null as any))).toThrow(
+      expect(() => user.profile.changePhone(new Phone(1 as any))).toThrow(
         DomainError,
       );
-      expect(() => user.changePhone(new Phone(undefined as any))).toThrow(
+      expect(() => user.profile.changePhone(new Phone({} as any))).toThrow(
         DomainError,
       );
+      expect(() => user.profile.changePhone(new Phone([] as any))).toThrow(
+        DomainError,
+      );
+      expect(() => user.profile.changePhone(new Phone(false as any))).toThrow(
+        DomainError,
+      );
+      expect(() => user.profile.changePhone(new Phone(null as any))).toThrow(
+        DomainError,
+      );
+      expect(() =>
+        user.profile.changePhone(new Phone(undefined as any)),
+      ).toThrow(DomainError);
     });
 
     it('should throw invalid permission rule', () => {
@@ -233,7 +242,7 @@ describe('entity user', () => {
       expect(onCreate).toBeCalledTimes(1);
 
       const onChange = jest.spyOn((User as any).hooks, 'onChange');
-      user.changeUsername(new Username('new-username'));
+      user.profile.changeFirstName(new Username('new-username'));
       expect(onChange).toBeCalledTimes(1);
 
       expect(userRules).toBeCalledWith(user);

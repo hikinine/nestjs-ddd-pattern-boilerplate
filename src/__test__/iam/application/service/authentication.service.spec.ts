@@ -10,14 +10,13 @@ import {
 import { AuthenticationService, UserService } from '@iam/application/service';
 import { User } from '@iam/domain/entities';
 import { UserRepository } from '@iam/domain/repositories';
-import { SignInToken, Username } from '@iam/domain/value-object';
+import { SignInToken } from '@iam/domain/value-object';
 import { Author, AuthorUserContext } from '@lib/domain';
 import { AuthorContextService } from '@lib/provider';
 import { EventPublisherTestingFactory } from '@lib/provider/event-publisher.test-mode';
 import { INestApplication, UnauthorizedException } from '@nestjs/common';
 
 describe('auth service', () => {
-  let username: string;
   let email: string;
   const password = '12345678';
   let app: INestApplication;
@@ -30,17 +29,14 @@ describe('auth service', () => {
   let user: User;
 
   beforeEach(async () => {
-    const defaultUsername = 'username' + Math.random();
     const defaultEmail = 'email' + Math.random() + '@gmail.com';
 
     const factory = new CreateDefaultUserFactory(userRepository);
     user = await factory.execute({
-      username: new Username(defaultUsername),
       email: new Email(defaultEmail),
       password,
     });
 
-    username = defaultUsername;
     email = defaultEmail;
   });
 
@@ -59,7 +55,7 @@ describe('auth service', () => {
   describe('signInWithBasic Method', () => {
     it('should sign in and keep logged in', async () => {
       const signInToken = await authService.signInWithBasic(
-        username,
+        email,
         password,
         true,
       );
@@ -70,7 +66,7 @@ describe('auth service', () => {
 
     it('should sign in and not keep logged in', async () => {
       const signInToken = await authService.signInWithBasic(
-        username,
+        email,
         password,
         false,
       );
@@ -83,14 +79,14 @@ describe('auth service', () => {
       const password = 'random-wrong-password';
 
       await expect(() =>
-        authService.signInWithBasic(username, password),
+        authService.signInWithBasic(email, password),
       ).rejects.toBeInstanceOf(UnauthorizedException);
     });
-    it('should throw, wrong username', async () => {
-      const username = 'random-wrong-username';
+    it('should throw, wrong email', async () => {
+      const email = 'random-wrong-email';
 
       await expect(
-        authService.signInWithBasic(username, password),
+        authService.signInWithBasic(email, password),
       ).rejects.toBeInstanceOf(ItemNotFound);
     });
   });
@@ -98,7 +94,7 @@ describe('auth service', () => {
   describe('signInWithRefreshToken Method', () => {
     let signInToken: SignInToken;
     beforeEach(async () => {
-      signInToken = await authService.signInWithBasic(username, password, true);
+      signInToken = await authService.signInWithBasic(email, password, true);
       const author = new Author({
         id: user.id.value,
         exp: Date.now() + 999,

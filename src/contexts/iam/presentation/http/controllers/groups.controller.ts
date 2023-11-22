@@ -9,7 +9,6 @@ import { HttpExceptionFilter } from '@lib/common';
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   Post,
@@ -62,10 +61,5 @@ export class GroupsController {
   ): Promise<GroupSummaryOutput> {
     const group = await this.groupService.findByName(name);
     return new GroupSummaryOutput(group);
-  }
-  @Delete('/:id')
-  async removeGroup(@Param('id') id: string): Promise<void> {
-    await this.groupService.delete(id);
-    return void 0;
   }
 }

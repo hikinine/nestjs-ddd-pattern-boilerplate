@@ -21,7 +21,7 @@ const commands = [
   Command.ChangeUserPermissionsCommandHandler,
   Command.CleanAllUserDataCommandHandler,
   Command.RevokeUserAccessCommandHandler,
-  Command.UpdateUserBasicInfoCommandHandler,
+  Command.UpdateUserProfileCommandHandler,
   Command.SendEmailCommandHandler,
   Command.CreateGroupCommandHandler,
   Command.SubscribeUserToGroupCommandHandler,

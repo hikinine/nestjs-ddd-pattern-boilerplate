@@ -109,9 +109,17 @@ export async function iamModuleSeed(prisma: PrismaService) {
       data: {
         id: new Id().value,
         email: faker.internet.email(),
-        phone: generateRandomPhone(),
-        username: faker.person.firstName() + faker.person.lastName(),
-        office: 'Desenvolvedor',
+        profile: {
+          create: {
+            firstName: faker.person.firstName(),
+            lastName: faker.person.lastName(),
+            avatar: faker.internet.avatar(),
+            birthday: faker.date.past(),
+            gender: 'M',
+            phone: generateRandomPhone(),
+            office: 'Desenvolvedor',
+          },
+        },
         authentication: {
           create: {
             password: bcrypt.hashSync('12345678', 10),
@@ -154,9 +162,17 @@ export async function iamModuleSeed(prisma: PrismaService) {
     data: {
       id: new Id().value,
       email: 'root@root.com',
-      phone: '(71) 99295-6282',
-      username: 'root',
-      office: 'Desenvolvedor',
+      profile: {
+        create: {
+          firstName: faker.person.firstName(),
+          lastName: faker.person.lastName(),
+          avatar: faker.internet.avatar(),
+          birthday: faker.date.birthdate(),
+          phone: generateRandomPhone(),
+          office: 'Desenvolvedor',
+          gender: 'M',
+        },
+      },
       authentication: {
         create: {
           oauth: {
